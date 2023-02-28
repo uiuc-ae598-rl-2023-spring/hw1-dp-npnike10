@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import gridworld
 
 #/Users/niket/AE598/hw1-dp-npnike10-main
+#TODO look into organising via classes and functions
 
 
 def main():
