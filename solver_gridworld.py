@@ -105,13 +105,32 @@ class ValueIteration:
 
 class SARSA:
 
-    def __init__(self, theta, gamma, eps, num_episodes, env):
+    def __init__(self, theta, gamma, alpha, eps, num_episodes, env):
         self.theta=theta
         self.gamma=gamma
         self.eps=eps
+        self.alpha=alpha
         self.num_episodes=num_episodes
         self.env=env
         self.q=np.zeros((env.num_states,env.num_actions))
         self.pi=Policy(env.num_states, env.num_actions)
 
+    def single_episode(self):
+        s=self.env.reset()
+        a=self.pi.epsilon_greedy(s,self.eps,self.q)
+        done=False
+        while not done:
+            next_s, r, done=self.env.step(a)
+            next_a=self.pi.epsilon_greedy(next_s,self.eps,self.q)
+            self.q[self.env.s][a]+=self.alpha*(r+self.gamma*self.q[next_s][next_a]-self.q[self.env.s][a])
+
+            self.env.s=next_s
+            a=next_a
+
+    def learn_policy(self):
+        for episode in range(self.num_episodes):
+            self.single_episode()
+        for s in range(self.env.num_states):
+            self.pi.greedy(s,self.q)
+        return self.pi
     

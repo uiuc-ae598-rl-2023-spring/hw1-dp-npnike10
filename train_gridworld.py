@@ -2,7 +2,7 @@ import random
 import numpy as np
 import matplotlib.pyplot as plt
 import gridworld
-from solver_gridworld import PolicyIteration, ValueIteration
+from solver_gridworld import PolicyIteration, ValueIteration, SARSA
 
 def main():
     # Create environment
@@ -11,6 +11,9 @@ def main():
     # constants and parameters
     theta=0.0005
     gamma=0.95
+    eps=0.6
+    alpha=0.3
+    num_episodes=10000
 
     # Initialize simulation
     s = env.reset()
@@ -24,6 +27,11 @@ def main():
     VI_agent=ValueIteration(theta,gamma,env)
     VI_values,VI_policy=VI_agent.learn_policy()
     print('Value Iteration:',VI_values,VI_policy.policy)
+
+    # SARSA
+    sarsa_agent=SARSA(theta, gamma, alpha, eps, num_episodes, env)
+    sarsa_policy=sarsa_agent.learn_policy()
+    print('SARSA:',sarsa_policy.policy)
 
     # Create log to store data from simulation
     log = {
