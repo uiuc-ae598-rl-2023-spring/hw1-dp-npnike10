@@ -102,4 +102,16 @@ class ValueIteration:
         for s in range(self.env.num_states):
             self.pi.greedy(s,self.v,self)
         return self.v, self.pi
+
+class SARSA:
+
+    def __init__(self, theta, gamma, eps, num_episodes, env):
+        self.theta=theta
+        self.gamma=gamma
+        self.eps=eps
+        self.num_episodes=num_episodes
+        self.env=env
+        self.q=np.zeros((env.num_states,env.num_actions))
+        self.pi=Policy(env.num_states, env.num_actions)
+
     
