@@ -151,11 +151,10 @@ class QLearning:
         s=self.env.reset()
         done=False
         while not done:
+            a=self.pi.epsilon_greedys,self.eps,self.q)
             next_s, r, done=self.env.step(a)
-            next_a=self.pi.epsilon_greedy(next_s,self.eps,self.q)
-            self.q[s][a]+=self.alpha*(r+self.gamma*self.q[next_s][next_a]-self.q[s][a])
-            s=next_s
-            a=next_a   
+            self.q[s][a]+=self.alpha*(r+self.gamma*np.argmax(self.q[next_s])-self.q[s][a])
+            s=next_s 
 
     def learn_policy(self):
         for episode in range(self.num_episodes):

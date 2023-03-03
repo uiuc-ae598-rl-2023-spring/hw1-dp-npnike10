@@ -2,7 +2,7 @@ import random
 import numpy as np
 import matplotlib.pyplot as plt
 import gridworld
-from solver_gridworld import PolicyIteration, ValueIteration, SARSA
+from solver_gridworld import PolicyIteration, ValueIteration, SARSA, QLearning
 
 def main():
     # Create environment
@@ -32,6 +32,11 @@ def main():
     sarsa_agent=SARSA(theta, gamma, alpha, eps, num_episodes, env)
     sarsa_values, sarsa_policy=sarsa_agent.learn_policy()
     print('SARSA:',sarsa_values,sarsa_policy.policy)
+
+    # Q-Learning
+    QLearning_agent=QLearning(theta, gamma, alpha, eps, num_episodes, env)
+    QLearning_values, QLearning_policy=QLearning_agent.learn_policy()
+    print('Q-Learning:',QLearning_values,QLearning_policy.policy)
 
     
 
