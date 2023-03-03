@@ -49,12 +49,37 @@ def main():
 
     # Create log to store data from simulation
     log = {
-        't': [0],
-        's': [s],
-        'a': [],
-        'r': [],
-        'theta': [env.x[0]],        # agent does not have access to this, but helpful for display
-        'thetadot': [env.x[1]],     # agent does not have access to this, but helpful for display
+        't-PI': [0],
+        's-PI': [s],
+        'a-PI': [],
+        'r-PI': [],
+        't-VI': [0],
+        's-VI': [s],
+        'a-VI': [],
+        'r-VI': [],
+        't-sarsa': [0],
+        's-sarsa': [s],
+        'a-sarsa': [],
+        'r-sarsa': [],
+        't-qlearning': [0],
+        's-qlearning': [s],
+        'a-qlearning': [],
+        'r-qlearning': [],
+        'mean-value-PI': [],
+        'iter-PI': [0],
+        'mean-value-VI': [],
+        'iter-VI': [0],
+        'returns-sarsa': [],
+        'returns-qlearning': [],
+        'returns-sarsa2': [],
+        'returns-qlearning2': [],
+        'returns-sarsa3': [],
+        'returns-qlearning3': [],
+        'returns-sarsa4': [],
+        'returns-qlearning4': [],
+        'returns-sarsa5': [],
+        'returns-qlearning5': [],
+
     }
 
     # SARSA
