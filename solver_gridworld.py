@@ -127,9 +127,11 @@ class SARSA:
         self.q=np.zeros((env.num_states,env.num_actions))
         self.pi=Policy(env.num_states, env.num_actions)
 
-    def single_episode(self):
+    def single_episode(self,log):
         s=self.env.reset()
         a=self.pi.epsilon_greedy(s,self.eps,self.q)
+        G=0
+        iter=0
         done=False
         while not done:
             next_s, r, done=self.env.step(a)
@@ -137,10 +139,14 @@ class SARSA:
             self.q[s][a]+=self.alpha*(r+self.gamma*self.q[next_s][next_a]-self.q[s][a])
             s=next_s
             a=next_a
+
+            G+=self.gamma**iter*r
+            iter+=1
+        log['returns-sarsa'].append(G)
             
-    def learn_policy(self):
+    def learn_policy(self,log):
         for episode in range(self.num_episodes):
-            self.single_episode()
+            self.single_episode(log)
         for s in range(self.env.num_states):
             self.pi.greedy(s,self.q)
         v_TD0=TD0(self.pi,self.alpha,self.gamma,self.num_episodes,self.env)
@@ -159,8 +165,10 @@ class QLearning:
         self.q=np.zeros((env.num_states,env.num_actions))
         self.pi=Policy(env.num_states, env.num_actions)
 
-    def single_episode(self):
+    def single_episode(self,log):
         s=self.env.reset()
+        G=0
+        iter=0
         done=False
         while not done:
             a=self.pi.epsilon_greedy(s,self.eps,self.q)
@@ -169,9 +177,13 @@ class QLearning:
             self.q[s][a]+=self.alpha*(r+self.gamma*self.q[next_s][next_a]-self.q[s][a])
             s=next_s 
 
-    def learn_policy(self):
+            G+=self.gamma**iter*r
+            iter+=1
+        log['returns-qlearning'].append(G)
+
+    def learn_policy(self,log):
         for episode in range(self.num_episodes):
-            self.single_episode()
+            self.single_episode(log)
         for s in range(self.env.num_states):
             self.pi.greedy(s,self.q)
         v_TD0=TD0(self.pi,self.alpha,self.gamma,self.num_episodes,self.env)
