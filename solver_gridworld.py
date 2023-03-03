@@ -68,13 +68,20 @@ class PolicyIteration:
                 optimal=False
         return optimal
     
-    def learn_policy(self):
+    def learn_policy(self,log):
         optimal=False
+        mean_value=np.mean(np.asarray(self.v))
+        log['mean-value-PI'].append(mean_value)
         while not optimal:
             self.evaluate_policy()
             old_pi=self.pi.policy.copy()
             self.improve_policy()
             optimal=self.is_optimal(old_pi)
+
+            log['iter-PI'].append(log['iter-PI'][-1] + 1) #TODO check should this be inside evaluate_policy?
+            mean_value=np.mean(np.asarray(self.v))
+            log['mean-value-PI'].append(mean_value)
+
         return self.v, self.pi
 
 class ValueIteration:
@@ -86,7 +93,9 @@ class ValueIteration:
         self.v=random.sample(range(-100,100), k=env.num_states)
         self.pi=Policy(env.num_states, env.num_actions)
     
-    def update_value(self):
+    def update_value(self,log):
+        mean_value=np.mean(np.asarray(self.v))
+        log['mean-value-VI'].append(mean_value)
         while True:
             delta=0
             for st in range(self.env.num_states):
@@ -94,11 +103,14 @@ class ValueIteration:
                 action=self.pi.get_action(st)
                 self.v[st]=max([sum([self.env.p(next_st,st,action)*(self.env.r(st,action)+self.gamma*self.v[next_st]) for next_st in range(self.env.num_states)]) for act in range(self.env.num_actions)])
                 delta=max(delta,abs(value-self.v[st]))
+            log['iter-VI'].append(log['iter-VI'][-1] + 1)
+            mean_value=np.mean(np.asarray(self.v))
+            log['mean-value-VI'].append(mean_value)
             if delta<self.theta:
                 break
     
-    def learn_policy(self):
-        self.update_value()
+    def learn_policy(self,log):
+        self.update_value(log)
         for s in range(self.env.num_states):
             self.pi.greedy(s,self.v,self)
         return self.v, self.pi

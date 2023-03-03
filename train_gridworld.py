@@ -18,14 +18,31 @@ def main():
     # Initialize simulation
     s = env.reset()
 
+    # Create log to store data from simulation
+    log = {
+        't': [0],
+        's': [s],
+        'a': [],
+        'r': [],
+        'mean-value-PI': [],
+        'iter-PI': [0],
+        'mean-value-VI': [],
+        'iter-VI': [0],
+        'returns-sarsa': [],
+        'episode-sarsa': [0],
+        'returns-qlearning': [],
+        'episode-qlearning': [0],
+
+    }
+
     # Policy Iteration
     PI_agent=PolicyIteration(theta,gamma,env)
-    PI_values,PI_policy=PI_agent.learn_policy()
+    PI_values,PI_policy=PI_agent.learn_policy(log)
     print('Policy Iteration:',PI_values,PI_policy.policy)
 
     # Value Iteration
     VI_agent=ValueIteration(theta,gamma,env)
-    VI_values,VI_policy=VI_agent.learn_policy()
+    VI_values,VI_policy=VI_agent.learn_policy(log)
     print('Value Iteration:',VI_values,VI_policy.policy)
 
     # SARSA
@@ -38,13 +55,7 @@ def main():
     QLearning_values, QLearning_policy=QLearning_agent.learn_policy()
     print('Q-Learning:',QLearning_values,QLearning_policy.policy)
 
-    # Create log to store data from simulation
-    log = {
-        't': [0],
-        's': [s],
-        'a': [],
-        'r': [],
-    }
+    
 
     # Simulate until episode is done
     done = False
@@ -57,10 +68,21 @@ def main():
         log['r'].append(r)
 
     # Plot data and save to png file
-    plt.plot(log['t'], log['s'])
-    plt.plot(log['t'][:-1], log['a'])
-    plt.plot(log['t'][:-1], log['r'])
-    plt.legend(['s', 'a', 'r'])
+    # plt.plot(log['t'], log['s'])
+    plt.figure(1)
+    plt.plot(log['iter-PI'], log['mean-value-PI'])
+    plt.plot(log['iter-VI'], log['mean-value-VI'])
+    plt.show()
+    plt.figure(2)
+    plt.plot(PI_policy.policy)
+    plt.plot(VI_policy.policy)
+    plt.plot(sarsa_policy.policy)
+    plt.plot(QLearning_policy.policy)
+    plt.legend(['PI', 'VI', 'SARSA', 'Q-Learning'])
+    plt.show()
+    # plt.plot(log['t'][:-1], log['a'])
+    # plt.plot(log['t'][:-1], log['r'])
+    # plt.legend(['s', 'a', 'r'])
     plt.savefig('figures/gridworld/test_gridworld.png')
 
 
