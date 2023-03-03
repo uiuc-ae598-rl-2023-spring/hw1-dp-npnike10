@@ -122,15 +122,73 @@ class SARSA:
         while not done:
             next_s, r, done=self.env.step(a)
             next_a=self.pi.epsilon_greedy(next_s,self.eps,self.q)
-            self.q[self.env.s][a]+=self.alpha*(r+self.gamma*self.q[next_s][next_a]-self.q[self.env.s][a])
-
-            self.env.s=next_s
+            self.q[s][a]+=self.alpha*(r+self.gamma*self.q[next_s][next_a]-self.q[s][a])
+            s=next_s
             a=next_a
+            
+    def learn_policy(self):
+        for episode in range(self.num_episodes):
+            self.single_episode()
+        for s in range(self.env.num_states):
+            self.pi.greedy(s,self.q)
+        v_TD0=TD0(self.pi,self.alpha,self.gamma,self.num_episodes,self.env)
+        values=v_TD0.learn_values()
+        return values, self.pi
+
+class QLearning:
+
+    def __init__(self, theta, gamma, alpha, eps, num_episodes, env):
+        self.theta=theta
+        self.gamma=gamma
+        self.eps=eps
+        self.alpha=alpha
+        self.num_episodes=num_episodes
+        self.env=env
+        self.q=np.zeros((env.num_states,env.num_actions))
+        self.pi=Policy(env.num_states, env.num_actions)
+
+    def single_episode(self):
+        s=self.env.reset()
+        done=False
+        while not done:
+            next_s, r, done=self.env.step(a)
+            next_a=self.pi.epsilon_greedy(next_s,self.eps,self.q)
+            self.q[s][a]+=self.alpha*(r+self.gamma*self.q[next_s][next_a]-self.q[s][a])
+            s=next_s
+            a=next_a   
 
     def learn_policy(self):
         for episode in range(self.num_episodes):
             self.single_episode()
         for s in range(self.env.num_states):
             self.pi.greedy(s,self.q)
-        return self.pi
+        v_TD0=TD0(self.pi,self.alpha,self.gamma,self.num_episodes,self.env)
+        values=v_TD0.learn_values()
+        return values, self.pi
+
+class TD0:
+
+    def __init__(self,policy,alpha,gamma,num_episodes,env): # policy here is a Policy object
+        self.alpha=alpha
+        self.num_episodes=num_episodes
+        self.pi=policy
+        self.gamma=gamma
+        self.env=env
+        self.v=np.zeros(self.env.num_states)
+    
+    def single_episode(self):
+        s=self.env.reset()
+        done=False
+        while not done:
+            a=self.pi.get_action(s)
+            next_s, r, done=self.env.step(a)
+            self.v[s]+=self.alpha*(r+self.gamma*self.v[next_s]-self.v[s])
+            s=next_s
+
+    def learn_values(self):
+        for episode in range(self.num_episodes):
+            self.single_episode()
+        return self.v
+
+
     

@@ -11,8 +11,8 @@ def main():
     # constants and parameters
     theta=0.0005
     gamma=0.95
-    eps=0.6
-    alpha=0.3
+    eps=0.8
+    alpha=0.2
     num_episodes=10000
 
     # Initialize simulation
@@ -30,8 +30,10 @@ def main():
 
     # SARSA
     sarsa_agent=SARSA(theta, gamma, alpha, eps, num_episodes, env)
-    sarsa_policy=sarsa_agent.learn_policy()
-    print('SARSA:',sarsa_policy.policy)
+    sarsa_values, sarsa_policy=sarsa_agent.learn_policy()
+    print('SARSA:',sarsa_values,sarsa_policy.policy)
+
+    
 
     # Create log to store data from simulation
     log = {
