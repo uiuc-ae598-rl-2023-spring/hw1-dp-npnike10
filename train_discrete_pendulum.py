@@ -47,16 +47,6 @@ def main():
     # Initialize simulation
     s = env.reset()
 
-    # SARSA
-    sarsa_agent=SARSA(theta, gamma, alpha, eps, num_episodes, env)
-    sarsa_values, sarsa_policy=sarsa_agent.learn_policy()
-    print('SARSA:',sarsa_values,sarsa_policy.policy)
-
-    # Q-Learning
-    QLearning_agent=QLearning(theta, gamma, alpha, eps, num_episodes, env)
-    QLearning_values, QLearning_policy=QLearning_agent.learn_policy()
-    print('Q-Learning:',QLearning_values,QLearning_policy.policy)
-
     # Create log to store data from simulation
     log = {
         't': [0],
@@ -66,6 +56,18 @@ def main():
         'theta': [env.x[0]],        # agent does not have access to this, but helpful for display
         'thetadot': [env.x[1]],     # agent does not have access to this, but helpful for display
     }
+
+    # SARSA
+    sarsa_agent=SARSA(theta, gamma, alpha, eps, num_episodes, env)
+    sarsa_values, sarsa_policy=sarsa_agent.learn_policy(log)
+    print('SARSA:',sarsa_values,sarsa_policy.policy)
+
+    # Q-Learning
+    QLearning_agent=QLearning(theta, gamma, alpha, eps, num_episodes, env)
+    QLearning_values, QLearning_policy=QLearning_agent.learn_policy(log)
+    print('Q-Learning:',QLearning_values,QLearning_policy.policy)
+
+    
 
     # Simulate until episode is done
     done = False
