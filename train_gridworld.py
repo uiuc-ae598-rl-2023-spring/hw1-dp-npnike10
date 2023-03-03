@@ -38,8 +38,6 @@ def main():
     QLearning_values, QLearning_policy=QLearning_agent.learn_policy()
     print('Q-Learning:',QLearning_values,QLearning_policy.policy)
 
-    
-
     # Create log to store data from simulation
     log = {
         't': [0],
