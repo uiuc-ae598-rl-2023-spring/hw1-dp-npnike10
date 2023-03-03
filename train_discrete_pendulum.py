@@ -94,28 +94,28 @@ def main():
 
     
 
-    # Simulate until episode is done
-    done = False
-    while not done:
-        a = random.randrange(env.num_actions)
-        (s, r, done) = env.step(a)
-        log['t'].append(log['t'][-1] + 1)
-        log['s'].append(s)
-        log['a'].append(a)
-        log['r'].append(r)
-        log['theta'].append(env.x[0])
-        log['thetadot'].append(env.x[1])
+    # # Simulate until episode is done
+    # done = False
+    # while not done:
+    #     a = random.randrange(env.num_actions)
+    #     (s, r, done) = env.step(a)
+    #     log['t'].append(log['t'][-1] + 1)
+    #     log['s'].append(s)
+    #     log['a'].append(a)
+    #     log['r'].append(r)
+    #     log['theta'].append(env.x[0])
+    #     log['thetadot'].append(env.x[1])
 
-    # Plot data and save to png file
-    fig, ax = plt.subplots(2, 1, figsize=(10, 10))
-    ax[0].plot(log['t'], log['s'])
-    ax[0].plot(log['t'][:-1], log['a'])
-    ax[0].plot(log['t'][:-1], log['r'])
-    ax[0].legend(['s', 'a', 'r'])
-    ax[1].plot(log['t'], log['theta'])
-    ax[1].plot(log['t'], log['thetadot'])
-    ax[1].legend(['theta', 'thetadot'])
-    plt.savefig('figures/pendulum/test_discrete_pendulum.png')
+    # # Plot data and save to png file
+    # fig, ax = plt.subplots(2, 1, figsize=(10, 10))
+    # ax[0].plot(log['t'], log['s'])
+    # ax[0].plot(log['t'][:-1], log['a'])
+    # ax[0].plot(log['t'][:-1], log['r'])
+    # ax[0].legend(['s', 'a', 'r'])
+    # ax[1].plot(log['t'], log['theta'])
+    # ax[1].plot(log['t'], log['thetadot'])
+    # ax[1].legend(['theta', 'thetadot'])
+    # plt.savefig('figures/pendulum/test_discrete_pendulum.png')
 
 
 if __name__ == '__main__':
