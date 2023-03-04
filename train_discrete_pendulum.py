@@ -39,7 +39,7 @@ def main():
     gamma=0.95
     eps=0.8
     alpha=0.2
-    num_episodes=5000
+    num_episodes=2000
 
     # Apply unit test to check state representation
     test_x_to_s(env)
