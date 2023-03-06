@@ -139,8 +139,8 @@ def main():
     plt.xlabel('Number of Iterations')
     plt.ylabel('Mean of Value Function')
     plt.title('Learning Curve for Model-Based methods')
-    plt.show()
     plt.savefig('figures/gridworld/mean-values.png')
+    plt.show()
 
 
     plt.figure(2)
@@ -152,8 +152,8 @@ def main():
     plt.ylabel('Action')
     plt.title('Policy plot')
     plt.legend(['PI', 'VI', 'SARSA', 'Q-Learning'])
-    plt.show()
     plt.savefig('figures/gridworld/policies.png')
+    plt.show()
 
     plt.figure(3)
     plt.plot(range(1,num_episodes+1),log['returns-sarsa'])      #TODO check if plotting with decayed eps would be useful
@@ -162,8 +162,8 @@ def main():
     plt.ylabel('Return')
     plt.title('Learning Curve for Model-Free methods')
     plt.legend(['SARSA', 'Q-Learning'])
-    plt.show()
     plt.savefig('figures/gridworld/returns.png')
+    plt.show()
 
     plt.figure(4)
     plt.plot(PI_values)
@@ -174,8 +174,8 @@ def main():
     plt.ylabel('Value')
     plt.title('Value Function')
     plt.legend(['PI', 'VI', 'SARSA', 'Q-Learning'])
-    plt.show()
     plt.savefig('figures/gridworld/values.png')
+    plt.show()
 
     plt.figure(5)
     plt.plot(log['s-PI'])
@@ -186,10 +186,10 @@ def main():
     plt.ylabel('State')
     plt.title('Example Trajectory for Trained Agents')
     plt.legend(['PI', 'VI', 'SARSA', 'Q-Learning'])
-    plt.show()
     # plt.plot(log['t'][:-1], log['a'])
     # plt.plot(log['t'][:-1], log['r'])
     plt.savefig('figures/gridworld/trajectories.png')
+    plt.show()
 
 if __name__ == '__main__':
     main()

@@ -2,7 +2,7 @@ import random
 import numpy as np
 import matplotlib.pyplot as plt
 import discrete_pendulum
-from solver_gridworld import PolicyIteration, ValueIteration, SARSA, QLearning
+from solver_pendulum import PolicyIteration, ValueIteration, SARSA, QLearning
 
 def test_x_to_s(env):
     theta = np.linspace(-np.pi * (1 - (1 / env.n_theta)), np.pi * (1 - (1 / env.n_theta)), env.n_theta)
