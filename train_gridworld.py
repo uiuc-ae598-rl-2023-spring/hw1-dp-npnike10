@@ -41,17 +41,20 @@ def main():
         'mean-value-VI': [],
         'iter-VI': [0],
         'returns-sarsa': [],
-        'returns-qlearning': [],
-        'returns-sarsa2': [],
-        'returns-qlearning2': [],
-        'returns-sarsa3': [],
-        'returns-qlearning3': [],
-        'returns-sarsa4': [],
-        'returns-qlearning4': [],
-        'returns-sarsa5': [],
-        'returns-qlearning5': [],
-
+        'returns-qlearning': []
     }
+
+    log2={'returns-sarsa2': [],
+        'returns-qlearning2': []}
+    
+    log3={'returns-sarsa3': [],
+        'returns-qlearning3': []}
+
+    log4={'returns-sarsa4': [],
+        'returns-qlearning4': []}
+    
+    log5={'returns-sarsa5': [],
+        'returns-qlearning5': []}
 
     # Policy Iteration
     PI_agent=PolicyIteration(theta,gamma,env)
@@ -178,17 +181,20 @@ def main():
     plt.show()
 
     plt.figure(5)
-    plt.plot(log['s-PI'])
-    plt.plot(log['s-VI'])
-    plt.plot(log['s-sarsa'])                                     
-    plt.plot(log['s-qlearning'])
-    plt.xlabel('Time step')
-    plt.ylabel('State')
-    plt.title('Example Trajectory for Trained Agents')
-    plt.legend(['PI', 'VI', 'SARSA', 'Q-Learning'])
-    # plt.plot(log['t'][:-1], log['a'])
-    # plt.plot(log['t'][:-1], log['r'])
-    plt.savefig('figures/gridworld/trajectories.png')
+    fig5,axs=plt.subplot(4)
+    axs[0].plot(log['s-PI'])
+    axs[1].plot(log['s-VI'])
+    axs[2].plot(log['s-sarsa'])                                     
+    axs[3].plot(log['s-qlearning'])
+    axs[0].title('PI')
+    axs[1].title('VI')
+    axs[2].title('SARSA')                                
+    axs[3].title('Q-Learning')
+    for i in range(len(axs)):
+        axs[i].xlabel('Time step')
+        axs[i].ylabel('State')
+    fig5.suptitle('Example Trajectory for Trained Agents')
+    #fig5.savefig('figures/gridworld/trajectories.png')
     plt.show()
 
 if __name__ == '__main__':

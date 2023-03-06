@@ -2,7 +2,7 @@ import random
 import numpy as np
 import matplotlib.pyplot as plt
 import discrete_pendulum
-from solver_pendulum import PolicyIteration, ValueIteration, SARSA, QLearning
+from solver_gridworld import PolicyIteration, ValueIteration, SARSA, QLearning
 
 def test_x_to_s(env):
     theta = np.linspace(-np.pi * (1 - (1 / env.n_theta)), np.pi * (1 - (1 / env.n_theta)), env.n_theta)
@@ -39,7 +39,7 @@ def main():
     gamma=0.95
     eps=0.8
     alpha=0.2
-    num_episodes=2000
+    num_episodes=1000
 
     # Apply unit test to check state representation
     test_x_to_s(env)
@@ -49,14 +49,6 @@ def main():
 
     # Create log to store data from simulation
     log = {
-        't-PI': [0],
-        's-PI': [s],
-        'a-PI': [],
-        'r-PI': [],
-        't-VI': [0],
-        's-VI': [s],
-        'a-VI': [],
-        'r-VI': [],
         't-sarsa': [0],
         's-sarsa': [s],
         'a-sarsa': [],
@@ -65,21 +57,12 @@ def main():
         's-qlearning': [s],
         'a-qlearning': [],
         'r-qlearning': [],
-        'mean-value-PI': [],
-        'iter-PI': [0],
-        'mean-value-VI': [],
-        'iter-VI': [0],
         'returns-sarsa': [],
         'returns-qlearning': [],
-        'returns-sarsa2': [],
-        'returns-qlearning2': [],
-        'returns-sarsa3': [],
-        'returns-qlearning3': [],
-        'returns-sarsa4': [],
-        'returns-qlearning4': [],
-        'returns-sarsa5': [],
-        'returns-qlearning5': [],
-
+        'theta-qlearning':[],
+        'thetadot-qlearning':[],
+        'theta-sarsa':[],
+        'thetadot-sarsa':[]
     }
 
     # SARSA
@@ -92,30 +75,48 @@ def main():
     QLearning_values, QLearning_policy=QLearning_agent.learn_policy(log)
     print('Q-Learning:',QLearning_values,QLearning_policy.policy)
 
+    # Simulate until episode is done - SARSA
+    done = False
+    env.reset()
+    s=7
+    log['s-sarsa'][0]=s
+    while not done:
+        a = sarsa_policy.get_action(s)
+        (next_s, r, done) = env.step(a)
+        log['t-sarsa'].append(log['t-sarsa'][-1] + 1)
+        log['s-sarsa'].append(s)
+        log['a-sarsa'].append(a)
+        log['r-sarsa'].append(r)
+        log['theta-sarsa'].append(env.x[0])
+        log['thetadot-sarsa'].append(env.x[1])
+        s=next_s
     
+    # Simulate until episode is done - Q-Learning
+    done = False
+    env.reset()
+    s=7
+    log['s-qlearning'][0]=s
+    while not done:
+        a = QLearning_policy.get_action(s)
+        (next_s, r, done) = env.step(a)
+        log['t-qlearning'].append(log['t-qlearning'][-1] + 1)
+        log['s-qlearning'].append(s)
+        log['a-qlearning'].append(a)
+        log['r-qlearning'].append(r)
+        log['theta-qlearning'].append(env.x[0])
+        log['thetadot-qlearning'].append(env.x[1])
+        s=next_s
 
-    # # Simulate until episode is done
-    # done = False
-    # while not done:
-    #     a = random.randrange(env.num_actions)
-    #     (s, r, done) = env.step(a)
-    #     log['t'].append(log['t'][-1] + 1)
-    #     log['s'].append(s)
-    #     log['a'].append(a)
-    #     log['r'].append(r)
-    #     log['theta'].append(env.x[0])
-    #     log['thetadot'].append(env.x[1])
-
-    # # Plot data and save to png file
-    # fig, ax = plt.subplots(2, 1, figsize=(10, 10))
-    # ax[0].plot(log['t'], log['s'])
-    # ax[0].plot(log['t'][:-1], log['a'])
-    # ax[0].plot(log['t'][:-1], log['r'])
-    # ax[0].legend(['s', 'a', 'r'])
-    # ax[1].plot(log['t'], log['theta'])
-    # ax[1].plot(log['t'], log['thetadot'])
-    # ax[1].legend(['theta', 'thetadot'])
-    # plt.savefig('figures/pendulum/test_discrete_pendulum.png')
+    # Plot data and save to png file
+    fig, ax = plt.subplots(2, 1, figsize=(10, 10))
+    ax[0].plot(log['t'], log['s'])
+    ax[0].plot(log['t'][:-1], log['a'])
+    ax[0].plot(log['t'][:-1], log['r'])
+    ax[0].legend(['s', 'a', 'r'])
+    ax[1].plot(log['t'], log['theta'])
+    ax[1].plot(log['t'], log['thetadot'])
+    ax[1].legend(['theta', 'thetadot'])
+    plt.savefig('figures/pendulum/test_discrete_pendulum.png')
 
 
 if __name__ == '__main__':
