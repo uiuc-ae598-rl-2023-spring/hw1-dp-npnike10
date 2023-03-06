@@ -180,21 +180,22 @@ def main():
     plt.savefig('figures/gridworld/values.png')
     plt.show()
 
-    plt.figure(5)
-    fig5,axs=plt.subplot(4)
-    axs[0].plot(log['s-PI'])
-    axs[1].plot(log['s-VI'])
-    axs[2].plot(log['s-sarsa'])                                     
-    axs[3].plot(log['s-qlearning'])
-    axs[0].title('PI')
-    axs[1].title('VI')
-    axs[2].title('SARSA')                                
-    axs[3].title('Q-Learning')
-    for i in range(len(axs)):
-        axs[i].xlabel('Time step')
-        axs[i].ylabel('State')
+    fig5,(axs1,axs2)=plt.subplots(2,2,figsize=(12, 10))
+    axs1[0].plot(log['s-PI'])
+    axs1[1].plot(log['s-VI'])
+    axs2[0].plot(log['s-sarsa'])                                     
+    axs2[1].plot(log['s-qlearning'])
+    axs1[0].set_title('PI')
+    axs1[1].set_title('VI')
+    axs2[0].set_title('SARSA')                                
+    axs2[1].set_title('Q-Learning')
+    for i in range(len(axs1)):
+        axs1[i].set(xlabel='Time step',ylabel='State')
+    for i in range(len(axs2)):
+        axs2[i].set(xlabel='Time step',ylabel='State')
     fig5.suptitle('Example Trajectory for Trained Agents')
-    #fig5.savefig('figures/gridworld/trajectories.png')
+    fig5.savefig('figures/gridworld/trajectories.png')
+    fig5.tight_layout()
     plt.show()
 
 if __name__ == '__main__':
