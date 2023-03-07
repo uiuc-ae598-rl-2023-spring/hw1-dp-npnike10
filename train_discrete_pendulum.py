@@ -2,7 +2,7 @@ import random
 import numpy as np
 import matplotlib.pyplot as plt
 import discrete_pendulum
-from solver_gridworld import PolicyIteration, ValueIteration, SARSA, QLearning
+from solver_gridworld import SARSA, QLearning
 
 def test_x_to_s(env):
     theta = np.linspace(-np.pi * (1 - (1 / env.n_theta)), np.pi * (1 - (1 / env.n_theta)), env.n_theta)
@@ -32,14 +32,17 @@ def main():
     #
     #   How does performance vary with the number of grid points? What about
     #   computation time?
-    env = discrete_pendulum.Pendulum(n_theta=31, n_thetadot=31,n_tau=31) #15,21
+    env = discrete_pendulum.Pendulum(n_theta=15, n_thetadot=21,n_tau=31) #15,21
+
+    def wrap_pi(x):
+        return ((x + np.pi) % (2 * np.pi)) - np.pi
 
     # constants and parameters
     theta=0.0005
     gamma=0.95
-    eps=0.8
-    alpha=0.2
-    num_episodes=1000
+    eps=0.6
+    alpha=0.1
+    num_episodes=3000
 
     # Apply unit test to check state representation
     test_x_to_s(env)
@@ -87,7 +90,7 @@ def main():
         log['s-sarsa'].append(s)
         log['a-sarsa'].append(a)
         log['r-sarsa'].append(r)
-        log['theta-sarsa'].append(env.x[0])
+        log['theta-sarsa'].append(wrap_pi(env.x[0]))
         log['thetadot-sarsa'].append(env.x[1])
         s=next_s
     
@@ -96,6 +99,8 @@ def main():
     env.reset()
     s=7
     log['s-qlearning'][0]=s
+    log['theta-qlearning'].append(env.x[0])
+    log['thetadot-qlearning'].append(env.x[1])
     while not done:
         a = QLearning_policy.get_action(s)
         (next_s, r, done) = env.step(a)
@@ -103,20 +108,51 @@ def main():
         log['s-qlearning'].append(s)
         log['a-qlearning'].append(a)
         log['r-qlearning'].append(r)
-        log['theta-qlearning'].append(env.x[0])
+        log['theta-qlearning'].append(wrap_pi(env.x[0]))
         log['thetadot-qlearning'].append(env.x[1])
         s=next_s
 
     # Plot data and save to png file
-    fig, ax = plt.subplots(2, 1, figsize=(10, 10))
-    ax[0].plot(log['t'], log['s'])
-    ax[0].plot(log['t'][:-1], log['a'])
-    ax[0].plot(log['t'][:-1], log['r'])
-    ax[0].legend(['s', 'a', 'r'])
-    ax[1].plot(log['t'], log['theta'])
-    ax[1].plot(log['t'], log['thetadot'])
+    fig4, ax = plt.subplots(2, 1, figsize=(10, 10))
+    #ax[0].plot(log['t-qlearning'], log['s-qlearning'])
+    ax[0].plot(log['t-qlearning'][:-1], log['a-qlearning'])
+    ax[0].plot(log['t-qlearning'][:-1], log['r-qlearning'])
+    ax[0].legend(['a', 'r'])
+    ax[1].plot(log['t-qlearning'], log['theta-qlearning'])
+    ax[1].plot(log['t-qlearning'], log['thetadot-qlearning'])
     ax[1].legend(['theta', 'thetadot'])
     plt.savefig('figures/pendulum/test_discrete_pendulum.png')
+    plt.show()
+
+    plt.figure(1)
+    plt.plot(sarsa_policy.policy)
+    plt.plot(QLearning_policy.policy)
+    plt.xlabel('State')
+    plt.ylabel('Action')
+    plt.title('Policy plot')
+    plt.legend(['SARSA', 'Q-Learning'])
+    plt.savefig('figures/pendulum/policies.png')
+    plt.show()
+
+    plt.figure(2)
+    plt.plot(range(1,num_episodes+1),log['returns-sarsa'])      #TODO check if plotting with decayed eps would be useful
+    plt.plot(range(1,num_episodes+1),log['returns-qlearning'])
+    plt.xlabel('Number of Episodes')
+    plt.ylabel('Return')
+    plt.title('Learning Curve for Model-Free methods')
+    plt.legend(['SARSA', 'Q-Learning'])
+    plt.savefig('figures/pendulum/returns.png')
+    plt.show()
+
+    plt.figure(3)
+    plt.plot(sarsa_values)                                      #TODO see if different value of eps,alpha makes sarsa curve coincide
+    plt.plot(QLearning_values)
+    plt.xlabel('State')
+    plt.ylabel('Value')
+    plt.title('Value Function')
+    plt.legend(['SARSA', 'Q-Learning'])
+    plt.savefig('figures/pendulum/values.png')
+    plt.show()
 
 
 if __name__ == '__main__':

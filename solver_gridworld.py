@@ -46,7 +46,7 @@ class PolicyIteration:
         self.pi.initialise()
 
     # in-place policy evaluation
-    def evaluate_policy(self):
+    def evaluate_policy(self,log):
         while True:
             delta=0
             for st in range(self.env.num_states):
@@ -54,6 +54,10 @@ class PolicyIteration:
                 action=self.pi.get_action(st)
                 self.v[st]=sum([self.env.p(next_st,st,action)*(self.env.r(st,action)+self.gamma*self.v[next_st]) for next_st in range(self.env.num_states)])
                 delta=max(delta,abs(value-self.v[st]))
+
+            log['iter-PI'].append(log['iter-PI'][-1] + 1)
+            mean_value=np.mean(np.asarray(self.v))
+            log['mean-value-PI'].append(mean_value)
             if delta<self.theta:
                 break
     
@@ -73,15 +77,10 @@ class PolicyIteration:
         mean_value=np.mean(np.asarray(self.v))
         log['mean-value-PI'].append(mean_value)
         while not optimal:
-            self.evaluate_policy()
+            self.evaluate_policy(log)
             old_pi=self.pi.policy.copy()
             self.improve_policy()
-            optimal=self.is_optimal(old_pi)
-
-            log['iter-PI'].append(log['iter-PI'][-1] + 1) #TODO check should this be inside evaluate_policy?
-            mean_value=np.mean(np.asarray(self.v))
-            log['mean-value-PI'].append(mean_value)
-
+            optimal=self.is_optimal(old_pi)            
         return self.v, self.pi
 
 class ValueIteration:

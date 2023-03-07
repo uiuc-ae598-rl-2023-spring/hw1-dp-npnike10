@@ -11,9 +11,9 @@ def main():
     # constants and parameters
     theta=0.0005
     gamma=0.95
-    eps=0.7
+    eps=0.3
     alpha=0.1
-    num_episodes=1500
+    num_episodes=5000
 
     # Initialize simulation
     s = env.reset()
@@ -44,17 +44,20 @@ def main():
         'returns-qlearning': []
     }
 
-    log2={'returns-sarsa2': [],
-        'returns-qlearning2': []}
-    
-    log3={'returns-sarsa3': [],
-        'returns-qlearning3': []}
+    log1={'returns-sarsa': [],
+        'returns-qlearning': []}
 
-    log4={'returns-sarsa4': [],
-        'returns-qlearning4': []}
+    log2={'returns-sarsa': [],
+        'returns-qlearning': []}
     
-    log5={'returns-sarsa5': [],
-        'returns-qlearning5': []}
+    log3={'returns-sarsa': [],
+        'returns-qlearning': []}
+
+    log4={'returns-sarsa': [],
+        'returns-qlearning': []}
+    
+    log5={'returns-sarsa': [],
+        'returns-qlearning': []}
 
     # Policy Iteration
     PI_agent=PolicyIteration(theta,gamma,env)
@@ -76,7 +79,24 @@ def main():
     QLearning_values, QLearning_policy=QLearning_agent.learn_policy(log)
     print('Q-Learning:',QLearning_values,QLearning_policy.policy)
 
-    
+    logs=[log1,log2,log3,log4,log5]
+
+    def multiple_learning_curves(params,identifier):
+        if identifier==0:
+            for i, param in enumerate(params):
+                QLearning_agent_e=QLearning(theta, gamma, alpha,param , num_episodes, env)
+                QLearning_agent_e.learn_policy(logs[i])
+
+                sarsa_agent_e=SARSA(theta, gamma, alpha, param, num_episodes, env)
+                sarsa_agent_e.learn_policy(logs[i])
+        if identifier==1:
+            for i, param in enumerate(params):
+                QLearning_agent_e=QLearning(theta, gamma, param, eps, num_episodes, env)
+                QLearning_agent_e.learn_policy(logs[i])
+
+                sarsa_agent_e=SARSA(theta, gamma, param, eps, num_episodes, env)
+                sarsa_agent_e.learn_policy(logs[i])
+        
 
     # Simulate until episode is done - PI
     done = False
@@ -136,12 +156,65 @@ def main():
         s=next_s
 
     # Plot data and save to png file
+    epsilons=[0.1, 0.3, 0.5, 0.7, 0.9]
+    multiple_learning_curves(epsilons,0)
+    fig6,(axs1,axs2)=plt.subplots(1,2)
+    axs1.plot(range(1,num_episodes+1),log1['returns-sarsa'])
+    axs1.plot(range(1,num_episodes+1),log2['returns-sarsa'])
+    axs1.plot(range(1,num_episodes+1),log3['returns-sarsa'])
+    axs1.plot(range(1,num_episodes+1),log4['returns-sarsa'])
+    axs1.plot(range(1,num_episodes+1),log5['returns-sarsa'])  
+    axs2.plot(range(1,num_episodes+1),log1['returns-qlearning'])
+    axs2.plot(range(1,num_episodes+1),log2['returns-qlearning'])
+    axs2.plot(range(1,num_episodes+1),log3['returns-qlearning'])
+    axs2.plot(range(1,num_episodes+1),log4['returns-qlearning'])
+    axs2.plot(range(1,num_episodes+1),log5['returns-qlearning']) 
+    axs1.set_title('SARSA')                                
+    axs2.set_title('Q-Learning')
+    fig6.suptitle('Learning Curves for Varying Epsilon Values')
+    axs1.set(xlabel='Number of Episodes',ylabel='Return')
+    axs2.set(xlabel='Number of Episodes',ylabel='Return')
+    axs1.legend(epsilons)
+    axs2.legend(epsilons)
+    fig6.savefig('figures/gridworld/m_eps_lcs.png')
+    fig6.tight_layout()
+    plt.show()
+
+    alphas=[0.001, 0.01, 0.1, 0.3, 0.5]
+    for l in logs:
+        l['returns-sarsa'].clear()
+        l['returns-qlearning'].clear()
+    multiple_learning_curves(alphas,1)
+
+    fig7,(axs3,axs4)=plt.subplots(1,2)
+    axs3.plot(range(1,num_episodes+1),log1['returns-sarsa'])
+    axs3.plot(range(1,num_episodes+1),log2['returns-sarsa'])
+    axs3.plot(range(1,num_episodes+1),log3['returns-sarsa'])
+    axs3.plot(range(1,num_episodes+1),log4['returns-sarsa'])
+    axs3.plot(range(1,num_episodes+1),log5['returns-sarsa'])  
+    axs4.plot(range(1,num_episodes+1),log1['returns-qlearning'])
+    axs4.plot(range(1,num_episodes+1),log2['returns-qlearning'])
+    axs4.plot(range(1,num_episodes+1),log3['returns-qlearning'])
+    axs4.plot(range(1,num_episodes+1),log4['returns-qlearning'])
+    axs4.plot(range(1,num_episodes+1),log5['returns-qlearning']) 
+    axs3.set_title('SARSA')                                
+    axs4.set_title('Q-Learning')
+    fig7.suptitle('Learning Curves for Varying Alpha Values')
+    axs3.set(xlabel='Number of Episodes',ylabel='Return')
+    axs4.set(xlabel='Number of Episodes',ylabel='Return')
+    axs3.legend(alphas)
+    axs4.legend(alphas)
+    fig7.savefig('figures/gridworld/m_alphas_lcs.png')
+    fig7.tight_layout()
+    plt.show()
+
     plt.figure(1)
     plt.plot(log['iter-PI'], log['mean-value-PI'])
     plt.plot(log['iter-VI'], log['mean-value-VI'])
     plt.xlabel('Number of Iterations')
     plt.ylabel('Mean of Value Function')
     plt.title('Learning Curve for Model-Based methods')
+    plt.legend(['PI','VI'])
     plt.savefig('figures/gridworld/mean-values.png')
     plt.show()
 
@@ -153,7 +226,7 @@ def main():
     plt.plot(QLearning_policy.policy)
     plt.xlabel('State')
     plt.ylabel('Action')
-    plt.title('Policy plot')
+    plt.title('Policy of the Trained Agents')
     plt.legend(['PI', 'VI', 'SARSA', 'Q-Learning'])
     plt.savefig('figures/gridworld/policies.png')
     plt.show()
