@@ -40,9 +40,9 @@ def main():
     # constants and parameters
     theta=0.0005
     gamma=0.95
-    eps=0.6
+    eps=0.3
     alpha=0.1
-    num_episodes=7000
+    num_episodes=5000
 
     # Apply unit test to check state representation
     test_x_to_s(env)
