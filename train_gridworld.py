@@ -2,7 +2,7 @@ import random
 import numpy as np
 import matplotlib.pyplot as plt
 import gridworld
-from solver_gridworld import PolicyIteration, ValueIteration, SARSA, QLearning
+from solver import PolicyIteration, ValueIteration, SARSA, QLearning
 
 def main():
     # Create environment
